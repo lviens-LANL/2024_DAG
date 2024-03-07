@@ -11,8 +11,7 @@ The codes are for the following manuscript:
 ```
 gcc -shared -o healing_int.so healing_int.c
 ```
-  - Once compiled, the path of the compiled file needs to be changed in the python codes.
-   
+  - Once compiled, the path of the compiled file needs to be changed in the python codes. 
 - The **Data** folder contains the pre-processed data needed to reproduce the Figures.
 - The **Figures** folder contains all the figures that are output by the codes.
 
