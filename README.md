@@ -1,3 +1,15 @@
+# Python codes to analyze the healing phase of the medium following the DAG-2 chemical explosion
+
+The codes are for the following manuscript:
+Viens L. and B. G. Delbridge (Submitted to JGR), Shallow Soil Response to a Buried Chemical Explosion with Geophones and Distributed Acoustic Sensing
+
+
+# Description:
+
+- The **Codes** folder contains the codes to reproduce most Figures of the manuscript.
+- The **Data** folder contains the pre-processed data needed to reproduce the Figures.
+- The **Figures** folder contains all the figures that are output by the codes.
+
 # Copyright
 
 © 2024. Triad National Security, LLC. All rights reserved.
