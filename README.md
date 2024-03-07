@@ -8,10 +8,9 @@ The codes are for the following manuscript:
 
 - The **Codes** folder contains the codes to reproduce most Figures of the manuscript.
   - The LowLevel_callback_healing folder in the **Codes** contains a C routine written By Kurama Okubo (NIED). The original version can be found [here](https://github.com/kura-okubo/SeisMonitoring_Paper/tree/master/Post/ModelFit/code/LowLevel_callback_healing_distributed). The C library of the kernel of integration needs to be compiled with before running the Fig_3.py and Fig_5.py codes with:
-<p align="center">
-gcc -shared -o healing_int.so healing_int.c
-</p>  
-   - Once compiled, the path of the compiled file needs to be changed in the python codes 
+  <h1 align="center">gcc -shared -o healing_int.so healing_int.c</h1>
+  - Once compiled, the path of the compiled file needs to be changed in the python codes.
+   
 - The **Data** folder contains the pre-processed data needed to reproduce the Figures.
 - The **Figures** folder contains all the figures that are output by the codes.
 
