@@ -17,7 +17,7 @@ def int1(tau, t):
     return (1/tau) * np.exp(-t/tau)
 
 # Integration with low level callback function (from Okubo et al., 2024), read shared library
-lib_int = ctypes.CDLL(os.path.abspath('/Users/lviens/Python/DAG/DAG-2/Final_codes/LowLevel_callback_healing_distributed/healing_int.so'))
+lib_int = ctypes.CDLL(os.path.abspath('./LowLevel_callback_healing/healing_int.so'))
 lib_int.f.restype = ctypes.c_double
 lib_int.f.argtypes = (ctypes.c_int, ctypes.POINTER(ctypes.c_double), ctypes.c_void_p)
     
