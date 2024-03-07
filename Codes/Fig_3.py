@@ -23,7 +23,7 @@ import os, ctypes
 from scipy import integrate, LowLevelCallable
 # Integration with low level callback function
 
-lib_int = ctypes.CDLL(os.path.abspath('/Users/lviens/Python/DAG/DAG-2/Final_codes/LowLevel_callback_healing_distributed/healing_int.so'))
+lib_int = ctypes.CDLL(os.path.abspath('./LowLevel_callback_healing/healing_int.so'))
 lib_int.f.restype = ctypes.c_double
 lib_int.f.argtypes = (ctypes.c_int, ctypes.POINTER(ctypes.c_double), ctypes.c_void_p)
     
