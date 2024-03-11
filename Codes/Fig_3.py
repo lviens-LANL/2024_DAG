@@ -23,7 +23,7 @@ import os, ctypes
 from scipy import integrate, LowLevelCallable
 # Integration with low level callback function
 
-lib_int = ctypes.CDLL(os.path.abspath('./LowLevel_callback_healing/healing_int.so'))
+lib_int = ctypes.CDLL(os.path.abspath('/Users/lviens/Python/DAG/DAG-2/Final_codes/LowLevel_callback_healing_distributed/healing_int.so'))
 lib_int.f.restype = ctypes.c_double
 lib_int.f.argtypes = (ctypes.c_int, ctypes.POINTER(ctypes.c_double), ctypes.c_void_p)
     
@@ -122,7 +122,8 @@ else:
     zer= np.nan
 res0 =  [ res[0] * np.log(res[1] / Taumin ), zer ] 
 
-
+#%%
+print(res[0] * np.log(res[1] / Taumin ))
 #%% Some parameters to plot figure 3
 labels = ['$s$','$\\tau_{max}$' ]
 dataini =  sampler.get_chain( thin=50, flat=True)
@@ -177,13 +178,17 @@ cb = plt.colorbar(sc,  cax = cbaxes, orientation = 'horizontal'  )
 cb.ax.set_title('CC', fontsize = fnt)
 
 #% Plot 1D histograms
+mul_minus1 = -1 # multiply the s parameter by -1 as the model_heal(theta, ts) function has a - sign in it
 for i in range(Ndim):
     ax = axs[i, i]
     if i<Ndim-1:
         ax.set(xticklabels=[])
     ax.tick_params(bottom=True, top=True, left=True, right=True)
     ax.minorticks_off()
-    data = dataini[:, i]
+    if i==0:
+        data = dataini[:, i]*mul_minus1
+    else:
+        data = dataini[:, i]
     m1, s1 = norm.fit(data)
     xranges[i, 0] = max(data.min(), m1-xrange_sigma_factor*s1) # xmin
     xranges[i, 1] = min(data.max(), m1+xrange_sigma_factor*s1) # xmax
@@ -198,8 +203,8 @@ for i in range(Ndim):
     ax.axvline(median[i], c="dodgerblue", lw=4.0, ls="-")
     if i==0:
         ax.set_ylabel("Probability", fontsize=fnt)
-        ax.text(.752, .17 , '(b)', fontsize =fnt )
-        ax.set_xticks(np.arange(.78, .9, .02) )
+        ax.text(-.925, .17 , '(b)', fontsize =fnt )
+        ax.set_xticks(np.arange( -.9, -.78, .02) )
     if i==1:
         ax.yaxis.set_label_position("right")
         ax.set_ylabel("Probability", fontsize=fnt)
@@ -211,11 +216,19 @@ for i in range(Ndim):
         plt.setp(ax.get_xticklabels(), rotation=35, ha="right", rotation_mode="anchor")
     plt.setp(ax.get_xticklabels(), fontsize=fnt)
     plt.setp(ax.get_yticklabels(), fontsize=fnt)
-    ax.axvline(median[i], c="dodgerblue", lw=2, ls="-")
-    ax.axvline(perc1[i], c="dodgerblue", lw=2, ls="--")
-    ax.axvline(perc2[i], c="dodgerblue", lw=2, ls="--")
     
-    title = titletot.format(fmt(median[i]), fmt(median[i]- perc1[i]), fmt( perc2[i]-median[i]))
+    if i==0:
+        title = titletot.format(fmt(median[i]*mul_minus1), fmt(perc1[i]*mul_minus1 - median[i]*mul_minus1), fmt( median[i]*mul_minus1 - perc2[i]*mul_minus1))
+        ax.axvline(median[i]*mul_minus1, c="dodgerblue", lw=2, ls="-")
+        ax.axvline(perc1[i]*mul_minus1, c="dodgerblue", lw=2, ls="--")
+        ax.axvline(perc2[i]*mul_minus1, c="dodgerblue", lw=2, ls="--")
+        
+    else:
+        title = titletot.format(fmt(median[i]), fmt(median[i]-perc1[i] ), fmt( perc2[i]- median[i] ))
+        ax.axvline(median[i], c="dodgerblue", lw=2, ls="-")
+        ax.axvline(perc1[i], c="dodgerblue", lw=2, ls="--")
+        ax.axvline(perc2[i], c="dodgerblue", lw=2, ls="--")
+            
     ax.set_title( labels[i] + ' = ' + title )
     
 #% Plot 2D histogram 
@@ -223,7 +236,7 @@ for i in range(1, Ndim):
     for j in range(0, i):
         ax = axs[i, j]
         data_y =  dataini[:, i]
-        data_x =  dataini[:, j]
+        data_x =  dataini[:, j]*mul_minus1
         Z, X, Y = np.histogram2d(data_x, data_y, bins=18 ,
                                  weights=np.ones_like(data_x) / len(data_x))
         # Compute the bin centers.
@@ -249,11 +262,11 @@ for i in range(1, Ndim):
         levels_clipped = levels[Ncontour-Ncontour_clip:]# remove the lower levels
         h1 = ax.contourf(mX2, mY2, Z2.T, Ncontourf, norm=norm_Z, zorder=-10, cmap=cmap)
         ax.contour(mX2, mY2, Z2.T, levels_clipped, norm=norm_Z, colors='k', zorder=-9, linewidths=0.8)
-        ax.plot(median[j], median[i],  "o", c= 'dodgerblue' ,  ms=10, markeredgecolor="w", lw=1.0)
+        ax.plot(median[j]*-1, median[i],  "o", c= 'dodgerblue' ,  ms=10, markeredgecolor="w", lw=1.0)
         ax.ticklabel_format(axis='both', style='sci', scilimits=(-5, 5), useOffset=True, useLocale=True, useMathText=True)
         ax.set_xlim(xranges[j])
         ax.set_ylim(xranges[i])
-        ax.set_xticks(np.arange(.78, .9, .02) )
+        ax.set_xticks(np.arange(-.9,-.78,  .02) )
         ax.tick_params(bottom=True, top=True, left=True, right=False)
         ax.grid(linewidth = .5)
         if j==0:
@@ -275,14 +288,11 @@ axs[0,1].set_position(pos2)
 pos2 = [.092 , .345 ,  .4,  .25 ] 
 axs[0,0].set_position(pos2)
 
-pos2 = [.092 , .0625 ,  .4,  .25 ] 
+pos2 = [.092 , .065 ,  .4,  .25 ] 
 axs[1,0].set_position(pos2)
 
-pos2 = [.505 , .0625 ,  .4,  .25 ] 
+pos2 = [.505 , .065 ,  .4,  .25 ] 
 axs[1,1].set_position(pos2)
 plt.show()
-#%%
+##%%
 fig.savefig('../Figures/Fig_3.jpg', dpi = 300)
-
-
-
