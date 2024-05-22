@@ -58,7 +58,7 @@ def lnprior(theta):
     a1  = theta[0]
     a2  = theta[1]
     a3  = theta[2]
-    if -2.0 < a1 < .1 and 1 < a2 < 9  and 0 < a3 < .066  :
+    if -2.0 < a1 < .1 and .066 < a2 < 12  and 0 < a3 < .066  :
         return 0.0
     return -np.inf
 
@@ -71,24 +71,6 @@ def lnprob(theta, t, y, yerr):
 title_fmt=".2f"
 fmt = "{{0:{0}}}".format(title_fmt).format
 titletot = r"${{{0}}}_{{-{1}}}^{{+{2}}}$"
-#%%
-
-
-
-CClim = .3
-winfft = 4.0
-
-Eps = 4.0
-limval = .3
-sta_gap = 1
-chans =  [1965 ]#np.arange(100,2200,sta_gap)
-freqs =  [10, 25]
-dist_chans = np.arange(20, len(chans) + 20 )[::-1]
-
-
-FFT_ref_start = 8 #*60 # start computing fft after 7 hours.
-FFT_ref_end = 12 #*60 # start computing fft after 7 hours.
-# Taumin = 0.034
 
 #%% Load df/f results
 dir_out = '../Figures/'
@@ -103,8 +85,6 @@ with h5py.File(name_save, 'r') as f:
     tdas = f.get('tDAS')[:]
     test = f.get('curveDAS')[:]
 
-#%%
-chan = 1965  
 #%%
 
 curve = []
@@ -130,9 +110,10 @@ for i in [0,1,2] :
     data = dataini[:, i]
     (perc1[i], median[i], perc2[i]) = np.percentile(data, [16, 50, 84])
 
-tmpcruve = compute_y_healing( median, xHom )
+tmpcruve = compute_y_healing( median, xHom ) # Get median model curve
 allfitt = []
 
+#%% Randomly select 10000 models and compute curves
 selnb = random.sample(range(len(dataini)), 10000)
 for i in selnb:
     tmp = compute_y_healing(dataini[i,  :], xHom )
@@ -141,18 +122,15 @@ for i in selnb:
 allfitt = np.array(allfitt) 
 res = [median[0] ,median[1], median[2] ]  
 
-#%%
 
-
-
-#%%
+#%% Remove some bad models
 allfitt2 = []
 for i in np.arange(len(allfitt)):
     if str(np.nanmean(allfitt[i])) !=  'inf'  and str(np.nanmean(allfitt[i])) !=  '-inf' : 
         allfitt2.append(allfitt[i])
         print(np.nanmean(allfitt[i] ) )
 
-#%%
+#%% Plot Figure 3
 labels = ['$s$','$\\tau_{max}$','$\\tau_{min}$' ]
 dataini =  sampler.get_chain(flat=True)
 Ndim = 3
@@ -386,6 +364,3 @@ axs[0,2].set_visible(False)
 plt.show()
 
 fig.savefig('../Figures/Fig_3.jpg', dpi = 300)
-#%%
-# fig.savefig('/Users/lviens/Documents/DAG/Figures/Fig_3.jpg', dpi = 300)
-
