@@ -99,8 +99,6 @@ for i in np.arange(len(chanW)):
              line1a.append([a_geo2[ii], peak_SRb2[ii] ,dist_onlya[ii] , lat2[ii], lon2[ii]])  
         if chanW[i]==chanWa2[ii].decode("utf-8")  and  (a_geo2[ii])<0:
              line1b.append([b_geo2[ii], peak_SRb2[ii] ,dist_onlyb[ii], lat2[ii], lon2[ii] ])
-             # if dist_onlyb[ii] > 1200 : #and dist_onlyb[ii] < 600:
-             #      print(chanWa2[ii].decode("utf-8"), dist_onlyb[ii], a_geo2[ii])
 
 line2a = []
 line2b = []
@@ -367,7 +365,3 @@ ax11.set_position([.08, .065 , .4, .3])
 ax12.set_position([.58, .065 , .4, .3])
 
 fig1.savefig(dir_out + '/Fig_9.jpg', dpi=300)
-
-#%%
-print(p_value1b)
-
