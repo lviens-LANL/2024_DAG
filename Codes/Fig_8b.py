@@ -60,8 +60,6 @@ plt.yticks(fontsize = fnt)
 plt.text(-39, .12 , '(b)', fontsize = fnt)
 ax2.tick_params(bottom=True, top=True, left=True, right=True)
 
-
-
 ax3 = ax2.twinx()
 
 VPToney = (480 * 3 + 500* 4 + 530 * 8 + 570* 5 )/ 20 *1.5
@@ -84,26 +82,5 @@ plt.yticks(  vb )
 plt.ylabel('Estimated spall depth (m)')
 
 
-# ax3 = ax2.twinx()
-# plt.plot(xnew, piecewise_linear2(xnew, *p)/2 /2 * 500 , 'r')
- 
-
-# ax3.set_ylim([0, round(.26 * 22  / piecewise_linear2(xnew, *p)[0] )  ] )
-              
-           
-# arrval = [0 , .05  , .1 , .15, .2 , .25]
-# vb =[]
-# for i in arrval :
-#     vb.append( round(i * 22  / piecewise_linear2(xnew, *p)[0]  ) )
-    
-# plt.yticks(  vb )
-# plt.ylabel('Estimated spall depth (m)')
-
 plt.tight_layout()
 fig.savefig(dir_out + '/Fig_8b.jpg', dpi=300)
-
-
-#%%
-# plt.plot(xnew, piecewise_linear2(xnew, *p) /2 * 400 , 'r')
-# print(piecewise_linear2(xnew, *p) /2 * 400)
-
