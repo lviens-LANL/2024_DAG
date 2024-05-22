@@ -8,7 +8,6 @@ Created on Wed Nov 29 16:49:09 2023
 import h5py
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.optimize import least_squares
 from matplotlib.ticker import (MultipleLocator)
 
 #%%
@@ -16,8 +15,7 @@ dir_out = '../Figures/'
 name_save = '../Data/Fig_7.h5'
 
 fact = 2400 # Apparent wave velocity in m/s to convert PSR to PGA
-#%%
-# Load data
+#%% Load data
 with h5py.File(name_save, 'r') as f:
     T_DAS = f.get('T_DAS')[:]
     D_DAS = f.get('D_DAS')[:]
@@ -38,7 +36,6 @@ ax1.set_xscale('log')
 
 plt.grid(linewidth = .5)
 plt.xlabel('PSR ($s^{-1}$)', fontsize = fnt)
-# plt.ylabel('Frequency change at $t_0$ (%)', fontsize = fnt)
 plt.ylabel('$D_{t_0}$ (%)', fontsize = fnt)
 plt.xticks(fontsize = fnt)
 plt.yticks(fontsize = fnt)
@@ -50,9 +47,6 @@ ax1.yaxis.set_major_locator(MultipleLocator(1))
 ax1.tick_params(axis='y', which='minor', right=True )
 ax1.tick_params(axis='x', which='minor', top=True )
 ax1.tick_params(bottom=True, top=True, left=True, right=True)
-
-
-
 
 plt.xticks(fontsize=fnt)
 plt.yticks(fontsize=fnt)
@@ -82,7 +76,6 @@ cb = fig.colorbar(pl, cax = cbaxes, orientation = 'vertical', ticks = [500,1000,
 cb.ax.set_title('   Dist. to SGZ (m)', fontsize=fnt)
 
 
-##%%
 ax3 = plt.subplot(223)
 plt.scatter(peak_SRDAS*fact , D_DAS, s = 15 ,c = dist_chans , cmap = 'magma', zorder = 1, edgecolors = 'k', linewidth = .4, alpha = .35)
 plt.scatter(PGA, D_geo, s = 15 ,c = dist_only , cmap = 'magma',marker='s', zorder = 1, edgecolors = 'blue', linewidth = .4 )
@@ -100,8 +93,6 @@ ax3.yaxis.set_major_locator(MultipleLocator(1))
 ax3.tick_params(axis='y', which='minor', right=True )
 ax3.tick_params(axis='x', which='minor', top=True )
 ax3.tick_params(bottom=True, top=True, left=True, right=True)
-
-
 
 
 ax4 = plt.subplot(224)
@@ -125,7 +116,3 @@ plt.text(.045 , 10 , '(d)' )
 
 plt.tight_layout()
 fig.savefig(dir_out + '/Fig_7.jpg', dpi=300)
-
-#%%
-
-print( 7/2400)
