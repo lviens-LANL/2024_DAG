@@ -17,20 +17,20 @@ def int1(tau, t):
     return (1/tau) * np.exp(-t/tau)
 
 # Integration with low level callback function (from Okubo et al., 2024), read shared library
-lib_int = ctypes.CDLL(os.path.abspath('./LowLevel_callback_healing/healing_int.so'))
+lib_int = ctypes.CDLL(os.path.abspath('/Users/lviens/Python/DAG/DAG-2/Final_codes/LowLevel_callback_healing_distributed/healing_int.so'))
 lib_int.f.restype = ctypes.c_double
 lib_int.f.argtypes = (ctypes.c_int, ctypes.POINTER(ctypes.c_double), ctypes.c_void_p)
     
 
 def model_heal(theta, ts):
     # using Low-level caling function
-    S = theta[0]
-    taumax= theta[1]
-    taumin = 0.034 # fix taumin so that healing starts just after incident     (0.034 hours = 2 minutes)
+    S = theta[0] # s
+    taumax= theta[1] # Taumax
+    taumin = theta[2] # taumin  
     c = ctypes.c_double(ts) # This is the argument of time t as void * userdata
     user_data = ctypes.cast(ctypes.pointer(c), ctypes.c_void_p)
     int1_llc = LowLevelCallable(lib_int.f, user_data) # in this way, only void* is available as argument
-    return -S*integrate.quad(int1_llc, taumin, taumax)[0]
+    return S*integrate.quad(int1_llc, taumin, taumax)[0]
 
 def compute_y_healing(theta, ts):
     """
@@ -98,7 +98,8 @@ dvgeo = [dvgeo1, dvgeo2]
 ccgeo = [ccgeo1, ccgeo2] 
 dvHV = [dvHV1, dvHV2]  
 ccHV = [ccHV1, ccHV2]  
-
+#%%
+# print(med_param_DAS)
 
 #%% Plot DAS data
 fig = plt.figure(figsize = (9,12))
@@ -123,9 +124,9 @@ for i in np.arange(2):
     plt.xlim(0,12)
     plt.grid()
     
-    title1 = titletot.format(fmt(res0[i,0]), fmt(res0[i,0]- stdDt0[0,i]), fmt( stdDt0[1,i]-res0[i,0]) )
-    title2 = titletot.format(fmt(res0[i,1]), fmt(res0[i,1]- stdtau[0,i]), fmt( stdtau[1,i] - res0[i,1]  ))
-    ax.text(2.5, -3.3, '  $D_{t_0}$ = ' + title1 +' %\n' +  r' $\tau_{rec}$ = ' + title2 + ' hour' , fontsize = fnt+ 2,bbox=dict(facecolor='w', edgecolor='k', boxstyle='round', alpha = .8),linespacing =1.5  )
+    title1 = titletot.format(fmt(res0[i,0]), fmt( stdDt0[0,i]), fmt( stdDt0[1,i]) )
+    title2 = titletot.format(fmt(res0[i,1]), fmt( stdtau[0,i]), fmt( stdtau[1,i]    ))
+    ax.text(2.5, -3.3, '  $D_{t_0}$ = ' + title1 +' %\n' +  r' $\tau_{max}$ = ' + title2 + ' hour' , fontsize = fnt+ 2,bbox=dict(facecolor='w', edgecolor='k', boxstyle='round', alpha = .8),linespacing =1.5  )
     if i ==0 :   
         rect = plt.Rectangle( (3.5, 2.05 ) ,  5, 1.85, alpha = .8, facecolor = 'w', edgecolor = 'k',  zorder = 1 )
         ax.add_patch(rect)
@@ -153,9 +154,9 @@ for i in np.arange(2):
         
     
     plt.grid()
-    title1 = titletot.format(fmt(res0geo[i,0]), fmt(res0geo[i,0]- stdDt0geo[0,i]), fmt( stdDt0geo[1,i]-res0geo[i,0]) )
-    title2 = titletot.format(fmt(res0geo[i,1]), fmt(res0geo[i,1]- stdtaugeo[0,i]), fmt( stdtaugeo[1,i] - res0geo[i,1]  ))
-    ax.text(2.5, -3.3, '  $D_{t_0}$ = ' + title1 +' %\n' +  r' $\tau_{rec}$ = ' + title2 + ' hour' , fontsize = fnt+ 2,bbox=dict(facecolor='w', edgecolor='k', boxstyle='round', alpha = .8),linespacing =1.5  )
+    title1 = titletot.format(fmt(res0geo[i,0]), fmt( stdDt0geo[0,i]), fmt( stdDt0geo[1,i] ) )
+    title2 = titletot.format(fmt(res0geo[i,1]), fmt(  stdtaugeo[0,i]), fmt( stdtaugeo[1,i]   ))
+    ax.text(2.5, -3.3, '  $D_{t_0}$ = ' + title1 +' %\n' +  r' $\tau_{max}$ = ' + title2 + ' hour' , fontsize = fnt+ 2,bbox=dict(facecolor='w', edgecolor='k', boxstyle='round', alpha = .8),linespacing =1.5  )
     plt.ylim(-4,4)
     plt.xlim(0,12)
       
@@ -177,9 +178,9 @@ for i in np.arange(2):
         
     plt.title('Geophone - HVSR' , fontsize = fnt)
     plt.grid()
-    title1 = titletot.format(fmt(res0HV[i,0]), fmt(res0HV[i,0]- stdDt0HV[0,i]), fmt( stdDt0HV[1,i]-res0HV[i,0]) )
-    title2 = titletot.format(fmt(res0HV[i,1]), fmt(res0HV[i,1]- stdtauHV[0,i]), fmt( stdtauHV[1,i] - res0HV[i,1]  ))
-    ax.text(2.5, -3.3, '  $D_{t_0}$ = ' + title1 +' %\n' +  r' $\tau_{rec}$ = ' + title2 + ' hour' , fontsize = fnt+ 2,bbox=dict(facecolor='w', edgecolor='k', boxstyle='round', alpha = .8),linespacing =1.5  )
+    title1 = titletot.format(fmt(res0HV[i,0]), fmt(  stdDt0HV[0,i]), fmt( stdDt0HV[1,i] ) )
+    title2 = titletot.format(fmt(res0HV[i,1]), fmt( stdtauHV[0,i]), fmt( stdtauHV[1,i]    ))
+    ax.text(2.5, -3.3, '  $D_{t_0}$ = ' + title1 +' %\n' +  r' $\tau_{max}$ = ' + title2 + ' hour' , fontsize = fnt+ 2,bbox=dict(facecolor='w', edgecolor='k', boxstyle='round', alpha = .8),linespacing =1.5  )
     plt.ylim(-4,4)
     plt.xlim(0,12)
     plt.xlabel('Time after DAG-2 (Hour)' )
@@ -187,3 +188,6 @@ for i in np.arange(2):
 plt.tight_layout()
 fig.savefig(dir_out + '/Fig_5.jpg', dpi=300)
 
+
+#%%
+print(med_param_HV)

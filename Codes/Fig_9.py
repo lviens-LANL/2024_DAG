@@ -95,25 +95,35 @@ line1a = []
 line1b = []
 for i in np.arange(len(chanW)):
     for ii in np.arange(len(chanWa2)):
-        if chanW[i]==chanWa2[ii].decode("utf-8")and abs(a_geo2[ii])<4.95 and  (a_geo2[ii])>0:
+        if chanW[i]==chanWa2[ii].decode("utf-8")and  (a_geo2[ii])<0:
              line1a.append([a_geo2[ii], peak_SRb2[ii] ,dist_onlya[ii] , lat2[ii], lon2[ii]])  
-        if chanW[i]==chanWa2[ii].decode("utf-8")and abs(b_geo2[ii])<3.1 and  (a_geo2[ii])>0:
+        if chanW[i]==chanWa2[ii].decode("utf-8")  and  (a_geo2[ii])<0:
              line1b.append([b_geo2[ii], peak_SRb2[ii] ,dist_onlyb[ii], lat2[ii], lon2[ii] ])
+             # if dist_onlyb[ii] > 1200 : #and dist_onlyb[ii] < 600:
+             #      print(chanWa2[ii].decode("utf-8"), dist_onlyb[ii], a_geo2[ii])
 
 line2a = []
 line2b = []
 for i in np.arange(len(chanS)):
     for ii in np.arange(len(chanWa2)):
-        if chanS[i]==chanWa2[ii].decode("utf-8") and abs(a_geo2[ii])<4.95 and  (a_geo2[ii])>0:
+        if chanS[i]==chanWa2[ii].decode("utf-8")  and  (a_geo2[ii])<0:
              line2a.append([a_geo2[ii], peak_SRb2[ii] ,dist_onlya[ii] , latb2[ii], lonb2[ii]])
-        if chanS[i]==chanWa2[ii].decode("utf-8") and abs(b_geo2[ii])<3.1 and  (a_geo2[ii])>0:
+        if chanS[i]==chanWa2[ii].decode("utf-8")   and  (a_geo2[ii])<0:
              line2b.append([b_geo2[ii], peak_SRb2[ii], dist_onlyb[ii], latb2[ii], lonb2[ii] ])
+             if dist_onlyb[ii] <400  :
+                  print(chanWa2[ii].decode("utf-8"), dist_onlyb[ii] , a_geo2[ii])
+             
+             
 
 line1a = np.array(line1a)
 line2a = np.array(line2a)     
 line1b = np.array(line1b)
 line2b = np.array(line2b)         
-print(line2a) 
+# print(line2a) 
+#%%
+for ii in np.arange(len(chanWa2)):
+    if dist_onlyb[ii] >300 and dist_onlyb[ii] <400:
+                  print(chanWa2[ii].decode("utf-8"), dist_onlyb[ii] , b_geo2[ii])
 #%%
 GZ_loc = [ -116.06926431, 37.114644234]
 fnt =12
@@ -160,10 +170,13 @@ xp, yp = m3(-116.09275 , 37.123 )
 plt.text(xp, yp , '(a)', fontsize=fnt)
 
 xp, yp = m3(xv, yv )
-plt.contourf(xp, yp ,grid_z0 , cmap = 'hot_r', vmin = 0 ,vmax = 6, alpha = .7)
+plt.contourf(xp, yp ,grid_z0 , cmap = 'hot', vmin = -5 ,vmax = 0, alpha = .7)
 
 xp, yp = m3(lon2,lat2 )
-sc = plt.scatter(xp, yp, c = a_geo2  , vmin = 0,vmax = 6 ,cmap = 'hot_r', edgecolors = 'k', linewidth = .5, alpha = .7)
+sc = plt.scatter(xp, yp, c = a_geo2  , vmin = -5,vmax = 0 ,cmap = 'hot', edgecolors = 'k', linewidth = .5, alpha = .7)
+
+xp, yp = m3(-116.089 , 37.119 )
+plt.text(xp, yp , '                      \n                      \n                      ',   fontsize = fnt,bbox=dict(facecolor='w', edgecolor='k', boxstyle='round', alpha = .75),zorder = 1)
 
 
 arrowlonS = -116.0617
@@ -186,14 +199,14 @@ x,y = m3(-116.0894 , 37.0958)
 plt.text(x , y, 'SW line', weight='bold')
 
 
-m3.drawmapscale(-116.084, 37.12, -116.084, 37.12, 1, barstyle='fancy', fontsize =fnt, format ='%s') # Plot scale
+m3.drawmapscale(-116.084, 37.12, -116.084, 37.12, 1, barstyle='fancy', fontsize =fnt, format ='%s',zorder = 10) # Plot scale
 
 xp, yp = m3(GZ_loc[0],GZ_loc[1] )
 plt.scatter(xp, yp, s = 150, edgecolors = 'k' ,color = 'r', linewidth = 1, marker='*', label = 'GZ' )
 
 plt.grid(linewidth =.5)
-cbaxes = fig1.add_axes([0.22, 0.94, 0.13, 0.019])
-cb = plt.colorbar(sc,  cax = cbaxes, orientation = 'horizontal'  ) 
+cbaxes = fig1.add_axes([0.21, 0.94, 0.175, 0.019])
+cb = plt.colorbar(sc,  cax = cbaxes, orientation = 'horizontal', ticks=np.arange(-5, 1, 1)  ) 
 cb.ax.set_title('$D_{t_0}$ (%)', fontsize=fnt)
 
 
@@ -226,11 +239,11 @@ m3.drawmeridians(meridians ,labels=[0,0,0,1],linewidth=0,
 grid_z1 = griddata(((lonb2,latb2)), b_geo2, (xv, yv), method='linear')
 xp, yp = m3(xv, yv )
 
-plt.contourf(xp, yp ,grid_z1 , cmap = 'hot_r', vmin = 0 ,vmax = 3, alpha = .7)
+plt.contourf(xp, yp ,grid_z1 , cmap = 'hot_r', vmin = 1 ,vmax = 7, alpha = .7)
 
 
 xp, yp = m3(lonb2,latb2 )
-sc = plt.scatter(xp, yp , c = b_geo2  , vmin = 0 ,vmax =3 ,cmap = 'hot_r', edgecolors = 'k', linewidth = .5, alpha = .7)
+sc = plt.scatter(xp, yp , c = b_geo2  , vmin = 1 ,vmax =7 ,cmap = 'hot_r', edgecolors = 'k', linewidth = .5, alpha = .7)
 
 xp, yp = m3(GZ_loc[0],GZ_loc[1] )
 plt.scatter(xp, yp, s = 150, edgecolors = 'k' ,color = 'r', linewidth = 1, marker='*', label = 'GZ' )
@@ -259,9 +272,9 @@ plt.text(x , y, 'SE line', weight='bold')
 x,y = m3(-116.0894 , 37.0958)
 plt.text(x , y, 'SW line', weight='bold')
 
-cbaxes = fig1.add_axes([0.72, 0.94, 0.13, 0.019])
-cb = plt.colorbar(sc,  cax = cbaxes, orientation = 'horizontal'  ) 
-cb.ax.set_title('$\\tau_{rec}$ (hour)', fontsize=fnt)
+cbaxes = fig1.add_axes([0.71, 0.94, 0.175, 0.019])
+cb = plt.colorbar(sc,  cax = cbaxes, orientation = 'horizontal' , ticks= np.arange(1, 8 ,1) ) 
+cb.ax.set_title('$\\tau_{max}$ (hour)', fontsize=fnt)
 
 
 
@@ -286,18 +299,18 @@ ax11 = plt.subplot(223)
 plt.scatter(line1a[:,2] ,  line1a[:,0] ,s = 80, c = 'g' , edgecolor = 'k' )#, label = 'SW Line' )   
 plt.scatter(line2a[:,2] ,  line2a[:,0] ,s = 80, c= 'r', edgecolor = 'k' )#,label = 'SSE Line' ) 
 
-plt.plot(xnew,intercept1a + slope1a*np.log10(xnew) , 'g' , label = 'SW line: ' + str(round(intercept1a,2) )  + str(round(slope1a,2) ) +' x log$_{10}$(d)' ) #' \n$R^2$: ' + str(round(r_value1a**2,2)) + f', p-value: {p_value1a:.1e}' ) 
-plt.text(165, 5,  '(c)', fontsize=fnt)
+plt.plot(xnew,intercept1a + slope1a*np.log10(xnew) , 'g' , label = 'SW line: ' + str(round(intercept1a,2) ) + '+'  + str(round(slope1a,2) ) +' x log$_{10}$(d)' ) #' \n$R^2$: ' + str(round(r_value1a**2,2)) + f', p-value: {p_value1a:.1e}' ) 
+plt.text(165, 0.5,  '(c)', fontsize=fnt)
 
-plt.plot(xnew, intercept2a +slope2a*np.log10(xnew) , 'r' , label = 'SE line: ' + str(round(intercept2a,2) )  + str(round(slope2a,2) ) +' x log$_{10}$(d) ') #' \n$R^2$: ' + str(round(r_value2a**2,2)) + f', p-val.: {p_value2a:.1e}' )
+plt.plot(xnew, intercept2a +slope2a*np.log10(xnew) , 'r' , label = 'SE line: ' + str(round(intercept2a,2) )  + '+' +  str(round(slope2a,2) ) +' x log$_{10}$(d) ') #' \n$R^2$: ' + str(round(r_value2a**2,2)) + f', p-val.: {p_value2a:.1e}' )
 ax11.semilogx()
 plt.xlim(200,2100)
 plt.title(  'SW line - $R^2$: ' + str(round(r_value1a**2,2)) + f', p-value: {p_value1a:.1e}'  +'\n SE line - $R^2$: ' + str(round(r_value2a**2,2)) + f', p-value: {p_value2a:.1e}'   )
 
 import matplotlib.ticker
 plt.grid(linewidth = .5)  
-plt.legend(loc = 9, fontsize = fnt)
-plt.ylim(0,4.9) 
+plt.legend(loc = 8, fontsize = fnt)
+plt.ylim(-4.9, 0) 
 ax11.set_xlabel('Distance to SGZ (m)', fontsize=fnt)
 ax11.set_ylabel('$D_{t_0}$ (%)', fontsize = fnt)
 # ax11.xaxis.set_minor_locator(np.arange(200, 2000, 100) )
@@ -323,18 +336,18 @@ plt.scatter(line2b[:,2] ,  line2b[:,0] ,s = 80, c= 'r', edgecolor = 'k'  )
 plt.plot(xnew,intercept1b + slope1b*np.log10(xnew) , 'g' , label = 'SW line: ' +str(round(intercept1b,2) )  + ''+ str(round(slope1b,2) ) +' x log$_{10}$(d)')
 plt.plot(xnew, intercept2b +slope2b*np.log10(xnew) , 'r' , label ='SE line: ' + str(round(intercept2b,2) )  + ''+ str(round(slope2b,2) ) +' x log$_{10}$(d)')
  
-plt.text(165, 4,  '(d)', fontsize=fnt)
+plt.text(165, 8.8,  '(d)', fontsize=fnt)
 
 plt.legend(loc = 9, fontsize = fnt)
 
 plt.grid(linewidth = .5) 
 plt.xlim(200,2200)  
 ax12.set_xlabel('Distance to SGZ (m)', fontsize=fnt)
-ax12.set_ylabel('$\\tau_{rec}$ (hour)', fontsize = fnt)
+ax12.set_ylabel('$\\tau_{max}$ (hour)', fontsize = fnt)
 plt.title('SW line - $R^2$: ' + str(round(r_value1b**2,2)) + f', p-value: {p_value1b:.1e}'  +'\n SE line - $R^2$: ' + str(round(r_value2b**2,2)) + f', p-value: {p_value2b:.1e}'   )
 
 ax12.semilogx()
-plt.ylim(0, 3.99) 
+plt.ylim(0, 8) 
  
 
 locmin = matplotlib.ticker.LogLocator(base=10.0,subs=np.arange(.1, 2, .1),numticks=10)
@@ -354,4 +367,7 @@ ax11.set_position([.08, .065 , .4, .3])
 ax12.set_position([.58, .065 , .4, .3])
 
 fig1.savefig(dir_out + '/Fig_9.jpg', dpi=300)
+
+#%%
+print(p_value1b)
 
